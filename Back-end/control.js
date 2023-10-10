@@ -5,6 +5,7 @@ let get;
 export async function add(req, res) {
   const { type, picture, price, location, contacts, occupied, description } =
     req.body;
+  console.log(type);
   try {
     const post = await house.create({
       type: type,
