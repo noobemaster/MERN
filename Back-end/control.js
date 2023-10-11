@@ -74,15 +74,21 @@ export const upd = async (req, res) => {
         get.comments.pull({ _id: change });
         break;
       case "chcom":
-        let upd = await house.updateOne(
+        await house.updateOne(
           { "comments._id": change },
           { $set: { "comments.$.comment": comment } }
+        );
+        break;
+      case "chhouse":
+        let up = await house.findOneAndUpdate(
+          { _id: value },
+          { $set: { ...change } }
         );
         break;
       default:
         throw new Error(` ${req.params.key} don't exist`);
     }
-    console.log(get);
+
     await get.save();
     res.send({
       succes: true,
@@ -96,19 +102,6 @@ export const del = async (req, res) => {
   const { value } = req.body;
   try {
     get = await house.deleteOne({ _id: value });
-    res.send({ succes: true, data: { deleted: get.deletedCount } });
-  } catch (e) {
-    console.log(e.message);
-    res.send({ succes: false, msg: e.message });
-  }
-};
-export const comment = async (req, res) => {
-  const { value, id } = req.body;
-  console.log(value + "     " + id);
-  const com = await house.find({ _id: id });
-  console.log(com);
-  try {
-    get = await com[0].comments.map((b) => b.deleteOne({ id: value }));
     res.send({ succes: true, data: { deleted: get.deletedCount } });
   } catch (e) {
     console.log(e.message);

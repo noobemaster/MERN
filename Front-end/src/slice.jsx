@@ -33,6 +33,12 @@ export const dbchange = (hao, mes, com, comment) => async (dispatch) => {
         .then((res) => console.log(res.data.succes))
         .catch((e) => console.log(e.response.data));
       break;
+    case "chhouse":
+      await port
+        .put("/chhouse", { value: hao, change: com })
+        .then((res) => console.log(res.data.succes))
+        .catch((e) => console.log(e.response.data));
+      break;
 
     default:
       console.log(`${mes} method not found`);

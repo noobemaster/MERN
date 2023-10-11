@@ -31,20 +31,27 @@ const Add = () => {
         settype((v) => ({ ...v, type: e.target.value }));
         break;
       case "county":
-        type.location.county = e.target.value;
-        settype({ ...type });
+        settype((v) => ({
+          ...v,
+          location: { ...v.location, county: e.target.value },
+        }));
+
         break;
       case "description":
         settype((v) => ({ ...v, description: e.target.value }));
         break;
       case "sub-county":
-        type.location.sub_county = e.target.value;
-        settype({ ...type });
+        settype((v) => ({
+          ...v,
+          location: { ...v.location, sub_county: e.target.value },
+        }));
 
         break;
       case "residence":
-        type.location.residence = e.target.value;
-        settype({ ...type });
+        settype((v) => ({
+          ...v,
+          location: { ...v.location, residence: e.target.value },
+        }));
         break;
       case "price":
         settype((v) => ({ ...v, price: e.target.value }));
@@ -98,31 +105,18 @@ const Add = () => {
         // Helper function to check if two values are equal
         function valuesAreEqual(value1, value2) {
           if (typeof value1 === "object" && typeof value2 === "object") {
-            if (Array.isArray(value1) && Array.isArray(value2)) {
-              // Handle arrays
-              if (value1.length !== value2.length) {
-                return false;
-              }
-              for (let i = 0; i < value1.length; i++) {
-                if (!valuesAreEqual(value1[i], value2[i])) {
-                  return false;
-                }
-              }
-              return true;
-            } else {
-              // Handle nested objects
-              const keys1 = Object.keys(value1);
-              const keys2 = Object.keys(value2);
-              if (keys1.length !== keys2.length) {
-                return false;
-              }
-              for (const key of keys1) {
-                if (!valuesAreEqual(value1[key], value2[key])) {
-                  return false;
-                }
-              }
-              return true;
+            // Handle nested objects
+            const keys1 = Object.keys(value1);
+            const keys2 = Object.keys(value2);
+            if (keys1.length !== keys2.length) {
+              return false;
             }
+            for (const key of keys1) {
+              if (!valuesAreEqual(value1[key], value2[key])) {
+                return false;
+              }
+            }
+            return true;
           } else {
             return value1 === value2;
           }
@@ -136,10 +130,7 @@ const Add = () => {
 
             // Compare the values
             if (!valuesAreEqual(previousValue, updatedValue)) {
-              changes[key] = {
-                previousValue,
-                updatedValue,
-              };
+              changes[key] = updatedValue;
             }
           }
         }
@@ -147,40 +138,10 @@ const Add = () => {
         return changes;
       }
 
-      //imported here
-      const previousObject = {
-        name: "John",
-        age: 30,
-        hobbies: ["reading", "gaming"],
-        address: {
-          city: "New York",
-          zip: "10001",
-        },
-      };
-
-      const updatedObject = {
-        name: "John",
-        age: 31,
-        hobbies: ["reading", "cooking"],
-        address: {
-          city: "New York",
-          zip: "10002",
-        },
-      };
-
-      const changes = detectChanges(updatedObject, previousObject, valu, type);
-      let chane = [];
-      for (const key in changes) {
-        if (changes.hasOwnProperty(key)) {
-          const { previousValue, updatedValue } = changes[key];
-          chane.push(updatedValue);
-          console.log(
-            `{${key},oldval:${previousValue},newval:${updatedValue}}`
-          );
-        }
-      }
-
-      console.log(chane);
+      const changes = detectChanges(valu, type);
+      Object.keys(changes).length > 0
+        ? dispatch(dbchange(type._id, "chhouse", changes))
+        : "";
     }
   };
   return (
