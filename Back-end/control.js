@@ -46,56 +46,38 @@ export const disp = async (req, res) => {
 export const upd = async (req, res) => {
   try {
     const { value, change, comment } = req.body;
-    get = await house.findOne({ _id: value });
-
     switch (req.params.key) {
-      case "type":
-        get.type = change;
-        break;
-      case "picture":
-        get.picture = change;
-        break;
-      case "contacts":
-        get.contacts = change;
-        break;
-      case "price":
-        get.price = change;
-        break;
-      case "location":
-        get.location = change;
-        break;
-      case "occupied":
-        get.occupied = change;
-        break;
       case "comments":
-        get.comments.push({ comment: change });
+        get = await house.updateOne(
+          { _id: value },
+          { $push: { comments: { comment: change } } }
+        );
         break;
       case "delcom":
-        get.comments.pull({ _id: change });
+        get = await house.updateOne(
+          { _id: value },
+          { $pull: { comments: { _id: change } } }
+        );
         break;
       case "chcom":
-        await house.updateOne(
+        get = await house.updateOne(
           { "comments._id": change },
           { $set: { "comments.$.comment": comment } }
         );
         break;
       case "chhouse":
-        let up = await house.findOneAndUpdate(
-          { _id: value },
-          { $set: { ...change } }
-        );
+        get = await house.updateOne({ _id: value }, { $set: { ...change } });
         break;
       default:
         throw new Error(` ${req.params.key} don't exist`);
     }
 
-    await get.save();
     res.send({
       succes: true,
-      data: `changed: ${req.params.key} to: ${change}`,
+      message: `Found ${get.matchedCount} changed: ${get.modifiedCount}`,
     });
   } catch (e) {
-    res.status(404).send({ succes: false, msg: e.message });
+    res.status(404).send({ succes: false, message: e.message });
   }
 };
 export const del = async (req, res) => {

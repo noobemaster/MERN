@@ -26,8 +26,8 @@ const Comments = () => {
     }
   };
   return (
-    <div className="flex">
-      <div className="border-2 border-black p-4 w-[50%] pl-10">
+    <div className="flex ">
+      <div className="border-2 border-black p-4 w-[50%] pl-10 ">
         {occupied && (
           <p className=" absolute float-right -rotate-45 bg-red-900 px-1 -ml-6 rounded-full bg-opacity-60">
             occupied
@@ -36,11 +36,11 @@ const Comments = () => {
         <img src={Img} alt="keja" />
         <p className="py-4">description</p>
         <h4>Type: {type}</h4>
+        <h4 className=" font-bold ">Location</h4>
         <span>
-          <h4>Location</h4>
-          <p>county: {county}</p>
-          <p> sub-county:{sub_county}</p>
-          <p>local:{residence}</p>
+          <p className="pl-4">county: {county}</p>
+          <p className="pl-4"> sub-county:{sub_county}</p>
+          <p className="pl-4">local:{residence}</p>
         </span>
 
         <p> Price: {price}</p>

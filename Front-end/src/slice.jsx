@@ -30,7 +30,7 @@ export const dbchange = (hao, mes, com, comment) => async (dispatch) => {
     case "chcom":
       await port
         .put("/chcom", { value: hao, change: com, comment: comment })
-        .then((res) => console.log(res.data.succes))
+        .then((res) => console.log(res.data))
         .catch((e) => console.log(e.response.data));
       break;
     case "chhouse":
@@ -44,11 +44,6 @@ export const dbchange = (hao, mes, com, comment) => async (dispatch) => {
       console.log(`${mes} method not found`);
       break;
   }
-  /*
-    //let h = await port.get("/");*/
-
-  // console.log(hao, mes);
-  //dispatch(add(h.data));
 };
 
 export const keja = createSlice({

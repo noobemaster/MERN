@@ -5,7 +5,7 @@ const House = ({ house }) => {
     house;
   const { county, sub_county, residence } = location;
   return (
-    <div className="m-2 p-2 border-2 border-yellow-500 bg-gray-600 relative ">
+    <div className="m-2 p-2 px-4 border-2 border-yellow-500 bg-gray-600 relative ">
       <div>
         {occupied && (
           <p className=" absolute float-right -rotate-45 bg-red-900 px-1 -ml-6 rounded-full bg-opacity-60">
@@ -15,19 +15,17 @@ const House = ({ house }) => {
         <img src={Img} alt="keja" />
         <p className="py-4">{description ? description : ""}</p>
         <h4>Type: {type}</h4>
-        <span>
-          <h4>Location</h4>
-          <p>county: {county}</p>
-          <p> sub-county:{sub_county}</p>
-          <p>local:{residence}</p>
-        </span>
-
+        <details>
+          <summary>Location</summary>
+          <p className="pl-4">county: {county}</p>
+          <p className="pl-4"> sub-county: {sub_county}</p>
+          <p className="pl-4">local: {residence}</p>
+        </details>
         <p> Price: {price}</p>
         <p>
           Contacts: +254<a href={`tel:+254${contacts}`}>{contacts}</a>
         </p>
       </div>
-
       <div className="flex flex-row ">
         <Link
           to="/comments"
