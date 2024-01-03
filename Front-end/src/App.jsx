@@ -3,14 +3,11 @@ import { useSelector } from "react-redux";
 import Footer from "./footer";
 import House from "./house";
 import Nav from "./nav";
-import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Sign from "./sign";
 import Comments from "./comments";
-import Data from "./data";
 function App() {
-  const house = useSelector((state) => state.data.house);
-  const [user, setuser] = useState(false);
+  const house = useSelector((state) => state.data);
   const Home = () => (
     <>
       <main className="flex flex-wrap">
@@ -23,13 +20,14 @@ function App() {
   return (
     <>
       <div className="bg-zinc-700">
-        <Nav user={user} logout={setuser} />
+        <Nav />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/sign-in" element={<Sign login={setuser} />} />
-          <Route path="/comments" element={<Comments />} />
+          <Route path="/sign-in" element={<Sign />} />
+          <Route path="/log-in" element={<Sign />} />
+          <Route path="/comments/:id" element={<Comments />} />
           <Route path="/add" element={<Add />} />
-          <Route path="/edit" element={<Add />} />
+          <Route path="/edit/:id" element={<Add />} />
         </Routes>
         <Footer />
       </div>

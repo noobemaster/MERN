@@ -5,7 +5,6 @@ let get;
 export async function add(req, res) {
   const { type, picture, price, location, contacts, occupied, description } =
     req.body;
-  console.log(type);
   try {
     const post = await house.create({
       type: type,
@@ -18,34 +17,23 @@ export async function add(req, res) {
       occupied: occupied,
     });
     post.save();
-    res.send({ succes: true, data: `added ${post.type}` });
+    res.send({ succes: true, message: `added ${post.type}` });
   } catch (e) {
-    res.send({ succes: false, msg: e.message });
+    res.send({ succes: false, message: e.message });
   }
 }
 export const disp = async (req, res) => {
   try {
-    if (!req.body) {
-      get = await house.find();
-    } else {
-      const { search, value } = req.body;
-      if (search == "location") {
-        get = await house.find({ [search]: { county: value } });
-      } else {
-        get = await house.find({ [search]: value });
-      }
-    }
-    if (get.length === 0) {
-      return res.status(404).send({ success: false, data: "page not found" });
-    }
-    res.send({ success: true, house: get });
+    get = await house.find();
+
+    res.send({ success: true, house: get, message: "found" });
   } catch (e) {
-    res.send({ succes: false, msg: e.message });
+    res.send({ succes: false, message: e.message });
   }
 };
 export const upd = async (req, res) => {
   try {
-    const { value, change, comment } = req.body;
+    const { value, change, comment } = req.body.data;
     switch (req.params.key) {
       case "comments":
         get = await house.updateOne(
@@ -74,7 +62,7 @@ export const upd = async (req, res) => {
 
     res.send({
       succes: true,
-      message: `Found ${get.matchedCount} changed: ${get.modifiedCount}`,
+      // message: `Found ${get.matchedCount} changed: ${get.modifiedCount}`,
     });
   } catch (e) {
     res.status(404).send({ succes: false, message: e.message });
@@ -84,9 +72,8 @@ export const del = async (req, res) => {
   const { value } = req.body;
   try {
     get = await house.deleteOne({ _id: value });
-    res.send({ succes: true, data: { deleted: get.deletedCount } });
+    res.send({ succes: true, message: { deleted: get.deletedCount } });
   } catch (e) {
-    console.log(e.message);
-    res.send({ succes: false, msg: e.message });
+    res.send({ succes: false, message: e.message });
   }
 };

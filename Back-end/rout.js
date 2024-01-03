@@ -1,6 +1,13 @@
 import exp from "express";
-import { add, disp, upd, del } from "./control.js";
+import { add, disp, upd, del } from "./hscontrol.js";
+import { checkToken, newUser, user, login } from "./userscontrols.js";
 const method = exp.Router();
-method.route("/").post(add).get(disp).delete(del);
+const meth = exp();
+method.route("/").get(disp);
+method.route("/users").post(newUser);
+method.route("/users/login").post(login);
+method.use(checkToken);
+method.route("/users"); //.put().delete();
 method.route("/:key").put(upd);
+method.route("/").delete(del).post(add);
 export default method;

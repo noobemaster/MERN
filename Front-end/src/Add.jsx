@@ -1,16 +1,17 @@
-import { useDispatch } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { useState } from "react";
-import { dbchange, refresh } from "./slice";
+import { dbchange } from "./slice";
 const Add = () => {
-  const valu = useLocation().state;
-  const path = useLocation().pathname;
+  const path = useLocation().pathname.split("/")[1];
+  const houses = useSelector((state) => state.data);
+  const valu = houses.find((house) => house._id === useParams().id);
   const defaultVal = {
     type: "",
     location: { county: "", sub_county: "", residence: "" },
     picture: "",
     description: "",
-    price: Number(),
+    price: "",
     occupied: Boolean(),
     contacts: "",
   };
@@ -69,7 +70,7 @@ const Add = () => {
   };
   const submit = (e) => {
     e.preventDefault();
-    if (path === "/add") {
+    if (path === "add") {
       if (
         type.contacts &&
         type.price >= 2500 &&
@@ -86,17 +87,20 @@ const Add = () => {
         }
         dispatch(dbchange(type, "new"));
         alert("added sucessfully");
-        dispatch(refresh());
       } else if (type.type === "") {
         alert("please provide type of house");
+        return;
       } else if (type.location.county === "") {
         alert("please fill county");
+        return;
       } else if (type.price < 2500) {
         alert("price should be more than 2500");
+        return;
       } else if (!type.contacts) {
         alert("please fill contacts");
+        return;
       }
-      settype({});
+      settype(defaultVal);
     } else {
       // changeDetector.js
       function detectChanges(previousObject, updatedObject) {
@@ -142,14 +146,17 @@ const Add = () => {
       Object.keys(changes).length > 0
         ? dispatch(dbchange(type._id, "chhouse", changes))
         : "";
+      alert("changes cuptered");
     }
   };
   return (
     <div className=" bg-black opacity-80 py-10 ">
       <form className="bg-gray-300 flex flex-col  mx-[20%] rounded-xl p-6 ">
         <span className="flex pb-2">
-          <h1 className="basis-1/2 capitalize font-bold text-lg">add here</h1>{" "}
-          {path === "/edit" ? (
+          <h1 className="basis-1/2 capitalize font-bold text-lg">
+            {path === "add" ? "add" : "change"} here
+          </h1>{" "}
+          {path === "edit" ? (
             <button
               onClick={() => {
                 dispatch(dbchange(type._id, "delete"));
@@ -269,7 +276,7 @@ const Add = () => {
             className="basis-1/2 bg-blue-700 rounded-2xl mx-5"
             //type="submit"
           >
-            {path === "/edit" ? "edit" : "submit"}
+            {path === "edit" ? "edit" : "submit"}
           </button>
           <Link
             to="/"

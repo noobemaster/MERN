@@ -1,12 +1,24 @@
-import { useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { dbchange } from "./slice";
 import Img from "../public/hse.jfif";
 const Comments = () => {
-  const { from } = useLocation().state;
-  const { _id, type, location, picture, price, occupied, contacts, comments } =
-    from;
+  const houses = useSelector((state) => state.data);
+  const user = useSelector((state) => state.user);
+  const houseId = useParams().id;
+  const from = houses.find((house) => house._id === houseId);
+  const {
+    _id,
+    type,
+    location,
+    picture,
+    price,
+    occupied,
+    contacts,
+    comments,
+    description,
+  } = from;
   const { county, sub_county, residence } = location;
   const [comment, chgcomment] = useState({
     comment: "",
@@ -34,13 +46,13 @@ const Comments = () => {
           </p>
         )}
         <img src={Img} alt="keja" />
-        <p className="py-4">description</p>
+        <p className="py-4">{description ? description : ""}</p>
         <h4>Type: {type}</h4>
         <h4 className=" font-bold ">Location</h4>
         <span>
-          <p className="pl-4">county: {county}</p>
-          <p className="pl-4"> sub-county:{sub_county}</p>
-          <p className="pl-4">local:{residence}</p>
+          {county && <p className="pl-4">county: {county}</p>}
+          {sub_county && <p className="pl-4"> sub-county: {sub_county}</p>}
+          {residence && <p className="pl-4">local: {residence}</p>}
         </span>
 
         <p> Price: {price}</p>
@@ -56,7 +68,7 @@ const Comments = () => {
             onChange={(e) =>
               chgcomment((prev) => ({ ...prev, comment: e.target.value }))
             }
-            className="placeholder-gray-400 pl-1"
+            className="placeholder-gray-400 pl-1 resize-none h-[10vh] w-[20vw]"
           ></textarea>
 
           <button className=" bg-blue-700 rounded-xl  mx-5 px-2" onClick={edit}>
@@ -80,27 +92,31 @@ const Comments = () => {
             <div className="border-2 border-zinc-800 p-3 my-2 ml-2" key={_id}>
               <span>David</span>
               <section className="p-2 text-white">{comment}</section>
-              <section className="flex flex-row mt-4">
-                <button
-                  onClick={() =>
-                    chgcomment((prev) => ({
-                      ...prev,
-                      comment,
-                      action: "change",
-                      comid: _id,
-                    }))
-                  }
-                  className="basis-1/2 bg-blue-700 rounded-2xl mx-5"
-                >
-                  edit
-                </button>
-                <button
-                  className="basis-1/2 text-red-900 bg-red-200 rounded-xl mx-5 h-8"
-                  onClick={() => dispatch(dbchange(parentId, "delcom", _id))}
-                >
-                  delete
-                </button>
-              </section>{" "}
+              {user.length ? (
+                <section className="flex flex-row mt-4">
+                  <button
+                    onClick={() =>
+                      chgcomment((prev) => ({
+                        ...prev,
+                        comment,
+                        action: "change",
+                        comid: _id,
+                      }))
+                    }
+                    className="basis-1/2 bg-blue-700 rounded-2xl mx-5"
+                  >
+                    edit
+                  </button>
+                  <button
+                    className="basis-1/2 text-red-900 bg-red-200 rounded-xl mx-5 h-8"
+                    onClick={() => dispatch(dbchange(parentId, "delcom", _id))}
+                  >
+                    delete
+                  </button>
+                </section>
+              ) : (
+                ""
+              )}
             </div>
           ))}
       </section>

@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Img from "../public/hse.jfif";
-const Nav = ({ user, logout }) => {
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "./slice";
+const Nav = () => {
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  function signout() {
+    localStorage.clear();
+    dispatch(logout());
+  }
   return (
     <>
       <nav className="flex flex-row border-black border-2 items-center">
@@ -11,11 +19,11 @@ const Nav = ({ user, logout }) => {
 
         <h1 className="text-4xl uppercase">Saka-keja</h1>
         <div className="absolute left-3/4 ">
-          {user ? (
+          {user.length ? (
             <>
               <button
                 className=" px-2 rounded-xl bg-blue-600"
-                onClick={() => logout(false)}
+                onClick={signout}
               >
                 log-out
               </button>
@@ -25,7 +33,7 @@ const Nav = ({ user, logout }) => {
             </>
           ) : (
             <button className=" px-2 rounded-xl bg-blue-600">
-              <Link to="/sign-in">sign-in</Link>
+              <Link to="/log-in">Log-in</Link>
             </button>
           )}
         </div>

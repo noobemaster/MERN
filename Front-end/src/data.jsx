@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const port = axios.create({
+const port = axios.create({
   baseURL: "http://localhost:2000/house",
   headers: {
     "Content-Type": "application/json",
@@ -9,7 +9,7 @@ export const port = axios.create({
 let Data;
 await port
   .get("/")
-  .then((res) => (Data = res.data))
+  .then((res) => (Data = res.data.house))
   .catch((e) => console.log(e.response.data));
 console.log("fetched");
 export default Data;
