@@ -1,31 +1,36 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
-import { dbchange } from "./slice";
+import { dbchange } from "./data";
 const Add = () => {
+  const navigate = useNavigate();
   const path = useLocation().pathname.split("/")[1];
-  const houses = useSelector((state) => state.data);
-  const valu = houses.find((house) => house._id === useParams().id);
+  const locol = useParams().id;
+  const valu = useSelector(({ houses }) =>
+    houses.Data.find(({ _id }) => _id === locol)
+  );
+  const user = useSelector((state) => state.user.user);
   const defaultVal = {
-    type: "",
+    type: String(),
     location: { county: "", sub_county: "", residence: "" },
-    picture: "",
-    description: "",
-    price: "",
+    picture: String(),
+    description: String(),
+    price: String(),
     occupied: Boolean(),
-    contacts: "",
+    contacts: String(),
+    userId: String(),
   };
   const [type, settype] = useState(valu ? valu : defaultVal);
   const dispatch = useDispatch();
-  /*  ********Views the image in clientside*********
+  /*  ********Views the image in clientside*********/
   var loadFile = function (event) {
     var output = document.getElementById("output");
-    output.src = URL.createObjectURL(event.target.files[0]);
-    console.log(output.src);
+    output.src = URL.createObjectURL(event.target.files[0]); //.split("b:")[1];
+    console.log(output);
     output.onload = function () {
       URL.revokeObjectURL(output.src); // free memory
     };
-  };*/
+  };
   const val = (e) => {
     switch (e.target.name) {
       case "type":
@@ -85,6 +90,7 @@ const Add = () => {
             delete type.location.residence;
             break;
         }
+        type.userId = user._id;
         dispatch(dbchange(type, "new"));
         alert("added sucessfully");
       } else if (type.type === "") {
@@ -102,10 +108,8 @@ const Add = () => {
       }
       settype(defaultVal);
     } else {
-      // changeDetector.js
       function detectChanges(previousObject, updatedObject) {
         const changes = {};
-
         // Helper function to check if two values are equal
         function valuesAreEqual(value1, value2) {
           if (typeof value1 === "object" && typeof value2 === "object") {
@@ -148,6 +152,7 @@ const Add = () => {
         : "";
       alert("changes cuptered");
     }
+    navigate(-1);
   };
   return (
     <div className=" bg-black opacity-80 py-10 ">
@@ -155,19 +160,19 @@ const Add = () => {
         <span className="flex pb-2">
           <h1 className="basis-1/2 capitalize font-bold text-lg">
             {path === "add" ? "add" : "change"} here
-          </h1>{" "}
+          </h1>
           {path === "edit" ? (
             <button
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 dispatch(dbchange(type._id, "delete"));
+                navigate(-1);
               }}
               className=" bg-red-300 rounded-full px-2 basis-1/2"
             >
               Delete
             </button>
-          ) : (
-            ""
-          )}
+          ) : null}
         </span>
         <label htmlFor="type">
           Type:
@@ -205,8 +210,8 @@ const Add = () => {
             value={type.location.county}
             id="c"
             required
-            className="bg-slate-200 my-1 ml-2 border-2 border-black"
             onChange={(e) => val(e)}
+            className="bg-slate-200 my-1 ml-2 border-2 border-black"
           />
           <br />
           <label htmlFor="s">Sub-county:</label>
@@ -214,8 +219,8 @@ const Add = () => {
             type="text"
             name="sub-county"
             value={type.location.sub_county}
-            className="bg-slate-200 my-1 ml-2 border-2 border-black"
             onChange={(e) => val(e)}
+            className="bg-slate-200 my-1 ml-2 border-2 border-black"
           />
           <br />
           <label htmlFor="r">Residence: </label>
@@ -223,8 +228,8 @@ const Add = () => {
             type="text"
             name="residence"
             value={type.location.residence}
-            className="bg-slate-200 my-1 ml-2 border-2 border-black"
             onChange={(e) => val(e)}
+            className="bg-slate-200 my-1 ml-2 border-2 border-black"
           />
         </span>
         <br />
@@ -232,7 +237,8 @@ const Add = () => {
         <input
           name="image"
           type="file"
-          accept="image/*" /*  onChange={(e) => loadFile(e)} */
+          accept="image/*"
+          onChange={(e) => loadFile(e)}
         />
         <br />
         <label htmlFor="p">
@@ -246,7 +252,7 @@ const Add = () => {
             className="bg-slate-200 my-1 ml-2 border-2 border-black"
             required
           />
-        </label>{" "}
+        </label>
         <br />
         <label htmlFor="o">
           <input
@@ -274,16 +280,15 @@ const Add = () => {
           <button
             onClick={(e) => submit(e)}
             className="basis-1/2 bg-blue-700 rounded-2xl mx-5"
-            //type="submit"
           >
             {path === "edit" ? "edit" : "submit"}
           </button>
-          <Link
-            to="/"
+          <button
+            onClick={(e) => e.preventDefault() || navigate(-1)}
             className="basis-1/2  bg-red-500 rounded-xl mx-5 h-8 text-center"
           >
             cancel
-          </Link>
+          </button>
         </div>
       </form>
     </div>

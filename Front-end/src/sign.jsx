@@ -1,39 +1,27 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import { login, usercontroll } from "./slice";
+import { useLocation, useNavigate } from "react-router-dom";
+import { usercontroll } from "./data";
 
 const Sign = () => {
+  const navigate = useNavigate();
   const path = useLocation().pathname.split("/")[1];
   const [user, setUser] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
   const submit = async () => {
-    let user1;
-    if (path === "sign-in") {
-      await dispatch(usercontroll(user, path));
-      user1 = JSON.parse(localStorage.getItem("user"));
-      //dispatch(login(user1));
-      dispatch(newtoken());
-      //localStorage.removeItem("user");
+    if (path === "sign-up") {
+      dispatch(usercontroll(user, path));
     } else {
-      dispatch(usercontroll(user, path)).then(() => {
-        user1 = JSON.parse(localStorage.getItem("user"));
-
-        console.log(user1);
-        user1 && dispatch(login(user1));
-        localStorage.removeItem("user");
-      });
+      dispatch(usercontroll(user, path));
     }
-    //setUser({ email: "", password: "" });
+    setUser({ email: "", password: "" });
+    navigate(-1);
   };
-  console.log();
   return (
     <div className=" bg-black opacity-80 py-[25vh]  h-[100vh]">
       <div className="bg-gray-300 flex flex-col  mx-[30%]  rounded-xl p-6">
         <h1 className="text-center font-black text-2xl py-3">{path}</h1>
         <span>
-          {" "}
           email:
           <input
             type="email"
@@ -55,24 +43,35 @@ const Sign = () => {
         </span>
         <div className="flex flex-row ">
           <button
-            //to="/"
             className="basis-1/2 bg-blue-700 rounded-2xl mx-3 h-8 text-center pt-1"
             onClick={submit}
           >
             submit
           </button>
-          <Link
-            to="/"
+          <button
+            onClick={() => navigate(-1)}
             className="basis-1/2 text-red-900 bg-red-200 rounded-xl mx-3 h-8 text-center pt-1"
           >
             cancel
-          </Link>
+          </button>
         </div>
         <span>
-          don't have an account?
-          <Link to="/sign-in" className="underline text-blue-700 ml-2">
-            sign-in
-          </Link>
+          {path == "log-in" ? "don't" : "Already "} have an account ?"
+          {path == "log-in" ? (
+            <button
+              onClick={() => navigate("/sign-up")}
+              className="underline text-blue-700 ml-2"
+            >
+              sign-up
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/log-in")}
+              className="underline text-blue-700 ml-2"
+            >
+              log-in
+            </button>
+          )}
         </span>
       </div>
     </div>

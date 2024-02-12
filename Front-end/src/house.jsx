@@ -1,11 +1,20 @@
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Img from "../public/hse.jfif";
-import { Link } from "react-router-dom";
 const House = ({ house }) => {
-  const { type, location, picture, price, occupied, contacts, description } =
-    house;
+  const {
+    type,
+    location,
+    picture,
+    price,
+    occupied,
+    contacts,
+    description,
+    userId,
+  } = house;
+  const navigate = useNavigate();
   const { county, sub_county, residence } = location;
-  const user = useSelector((state) => state.user);
+  const user = useSelector(({ user }) => user.user);
   return (
     <div className="m-2 p-2 px-4 border-2 border-yellow-500 bg-gray-600 relative max-w-[30vw]">
       <div>
@@ -32,22 +41,20 @@ const House = ({ house }) => {
         </p>
       </div>
       <div className="flex flex-row flex-wrap">
-        <Link
-          to={`/comments/${house._id}`}
+        <button
+          onClick={() => navigate(`/comments/${house._id}`)}
           className="cursor-pointer bg-cyan-950 rounded-lg text-blue-100 px-2 pb-1 mt-4 hover:bg-cyan-800"
         >
           comments
-        </Link>
-        {user.length ? (
-          <Link
-            to={`/edit/${house._id}`}
+        </button>
+        {user && userId == user._id ? (
+          <button
+            onClick={() => navigate(`/edit/${house._id}`)}
             className=" cursor-pointer bg-cyan-950 rounded-lg text-blue-100 px-2 pb-1 mt-4 ml-2 hover:bg-cyan-800"
           >
             edit
-          </Link>
-        ) : (
-          ""
-        )}
+          </button>
+        ) : null}
       </div>
     </div>
   );

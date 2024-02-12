@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="bg-black text-white opacity-40">
+    <footer className="bg-black text-white opacity-40 mt-[35vh]">
       <div>contacts</div>
       <div className="text-sm text-center bg-gray-700">
         cite created by Mugira &copy; 2023

@@ -11,7 +11,7 @@ const hsSchema = db.Schema(
       residence: String,
     },
     userId: String,
-    comments: [{ id: db.ObjectId, comment: String }],
+    comments: [{ id: db.ObjectId, comment: String, UID: String }],
     contacts: { type: Number, required: true },
     occupied: { type: Boolean, required: true },
   },
@@ -20,7 +20,7 @@ const hsSchema = db.Schema(
 const usersSchema = db.Schema({
   email: String,
   password: String,
-  houseIds: [],
+  // houseIds: [],
 });
 const house = db.model("house", hsSchema);
 export const users = db.model("Users", usersSchema);

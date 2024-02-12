@@ -1,13 +1,15 @@
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { dbchange } from "./slice";
+import { dbchange, fetch } from "./data";
 import Img from "../public/hse.jfif";
 const Comments = () => {
-  const houses = useSelector((state) => state.data);
-  const user = useSelector((state) => state.user);
-  const houseId = useParams().id;
-  const from = houses.find((house) => house._id === houseId);
+  const dispatch = useDispatch();
+  const locol = useParams().id;
+  const user = useSelector(({ user }) => user.user);
+  const from = useSelector(({ houses }) =>
+    houses.Data.find(({ _id }) => _id === locol)
+  );
   const {
     _id,
     type,
@@ -25,15 +27,15 @@ const Comments = () => {
     action: "Add",
     comid: 0,
   });
-  const dispatch = useDispatch();
-  console.log();
   const parentId = _id;
   const edit = () => {
     if (comment.action === "change") {
-      dispatch(dbchange(parentId, "chcom", comment.comid, comment.comment));
+      dispatch(
+        dbchange(parentId, "chcom", comment.comid, user._id, comment.comment)
+      );
       chgcomment((prev) => ({ ...prev, comment: "", action: "Add", comid: 0 }));
     } else if (comment.action === "Add") {
-      dispatch(dbchange(parentId, "comments", comment.comment));
+      dispatch(dbchange(parentId, "comments", comment.comment, user._id));
       chgcomment((prev) => ({ ...prev, comment: "" }));
     }
   };
@@ -46,7 +48,7 @@ const Comments = () => {
           </p>
         )}
         <img src={Img} alt="keja" />
-        <p className="py-4">{description ? description : ""}</p>
+        <p className="py-4">{description ? description : null}</p>
         <h4>Type: {type}</h4>
         <h4 className=" font-bold ">Location</h4>
         <span>
@@ -63,17 +65,22 @@ const Comments = () => {
         <hr className="w-full" />
         <div className="flex flex-row mt-4 ml-3">
           <textarea
-            placeholder="Add comments"
+            placeholder={user ? "Add comments" : "log in to add comments"}
             value={comment.comment}
             onChange={(e) =>
               chgcomment((prev) => ({ ...prev, comment: e.target.value }))
             }
-            className="placeholder-gray-400 pl-1 resize-none h-[10vh] w-[20vw]"
+            className="placeholder-gray-400 pl-1 resize-none h-[10vh] w-[25vw]"
           ></textarea>
 
-          <button className=" bg-blue-700 rounded-xl  mx-5 px-2" onClick={edit}>
-            {comment.action}
-          </button>
+          {user && (
+            <button
+              className=" bg-blue-700 rounded-xl  mx-5 px-2"
+              onClick={edit}
+            >
+              {comment.action}
+            </button>
+          )}
           {comment.action == "change" ? (
             <button
               className=" bg-red-700 rounded-xl   px-2"
@@ -83,16 +90,14 @@ const Comments = () => {
             >
               cancel
             </button>
-          ) : (
-            ""
-          )}
+          ) : null}
         </div>
         {comments &&
-          comments.map(({ _id, comment }) => (
+          comments.map(({ _id, comment, UID }) => (
             <div className="border-2 border-zinc-800 p-3 my-2 ml-2" key={_id}>
               <span>David</span>
               <section className="p-2 text-white">{comment}</section>
-              {user.length ? (
+              {user && user._id == UID ? (
                 <section className="flex flex-row mt-4">
                   <button
                     onClick={() =>
@@ -114,9 +119,7 @@ const Comments = () => {
                     delete
                   </button>
                 </section>
-              ) : (
-                ""
-              )}
+              ) : null}
             </div>
           ))}
       </section>
