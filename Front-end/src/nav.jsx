@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Img from "../public/hse.jfif";
-import { logout } from "./slice";
+import { logout } from "./redux/slice";
 
 const Nav = () => {
   const user = useSelector(({ user }) => user.user);
@@ -20,7 +20,10 @@ const Nav = () => {
             <>
               <button
                 className=" px-2 rounded-xl bg-blue-600"
-                onClick={() => dispatch(logout())}
+                onClick={() => {
+                  dispatch(logout());
+                  navigate("/");
+                }}
               >
                 log-out
               </button>
@@ -29,6 +32,12 @@ const Nav = () => {
                 onClick={() => navigate("/add")}
               >
                 add house
+              </button>
+              <button
+                className="ml-4 px-2 rounded-xl bg-blue-600"
+                onClick={() => navigate("/profile")}
+              >
+                profile
               </button>
             </>
           ) : (

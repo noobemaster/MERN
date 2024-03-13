@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { dbchange, fetch } from "./data";
-import Img from "../public/hse.jfif";
+import { dbchange, fetch } from "../redux/data";
+import Img from "../../public/hse.jfif";
 const Comments = () => {
   const dispatch = useDispatch();
   const locol = useParams().id;

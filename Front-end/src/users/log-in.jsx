@@ -1,26 +1,23 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
-import { usercontroll } from "./data";
+import { useNavigate } from "react-router-dom";
+import { usercontroll } from "../redux/data";
 
-const Sign = () => {
+const Log_in = () => {
   const navigate = useNavigate();
-  const path = useLocation().pathname.split("/")[1];
   const [user, setUser] = useState({ email: "", password: "" });
   const dispatch = useDispatch();
-  const submit = async () => {
-    if (path === "sign-up") {
-      dispatch(usercontroll(user, path));
-    } else {
-      dispatch(usercontroll(user, path));
-    }
+  const submit = () => {
+    dispatch(usercontroll(user, "log-in"));
     setUser({ email: "", password: "" });
-    navigate(-1);
+    navigate("/");
   };
   return (
     <div className=" bg-black opacity-80 py-[25vh]  h-[100vh]">
       <div className="bg-gray-300 flex flex-col  mx-[30%]  rounded-xl p-6">
-        <h1 className="text-center font-black text-2xl py-3">{path}</h1>
+        <h1 className="text-center font-black text-2xl py-3 uppercase">
+          log-in
+        </h1>
         <span>
           email:
           <input
@@ -56,25 +53,16 @@ const Sign = () => {
           </button>
         </div>
         <span>
-          {path == "log-in" ? "don't" : "Already "} have an account ?"
-          {path == "log-in" ? (
-            <button
-              onClick={() => navigate("/sign-up")}
-              className="underline text-blue-700 ml-2"
-            >
-              sign-up
-            </button>
-          ) : (
-            <button
-              onClick={() => navigate("/log-in")}
-              className="underline text-blue-700 ml-2"
-            >
-              log-in
-            </button>
-          )}
+          don't have an account ?
+          <button
+            onClick={() => navigate("/sign-up")}
+            className="underline text-blue-700 ml-2"
+          >
+            sign-up
+          </button>
         </span>
       </div>
     </div>
   );
 };
-export default Sign;
+export default Log_in;

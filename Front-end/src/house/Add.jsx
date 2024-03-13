@@ -1,7 +1,44 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
-import { dbchange } from "./data";
+import { dbchange } from "../redux/data";
+export function detectChanges(previousObject, updatedObject) {
+  const changes = {};
+  // Helper function to check if two values are equal
+  function valuesAreEqual(value1, value2) {
+    if (typeof value1 === "object" && typeof value2 === "object") {
+      // Handle nested objects
+      const keys1 = Object.keys(value1);
+      const keys2 = Object.keys(value2);
+      if (keys1.length !== keys2.length) {
+        return false;
+      }
+      for (const key of keys1) {
+        if (!valuesAreEqual(value1[key], value2[key])) {
+          return false;
+        }
+      }
+      return true;
+    } else {
+      return value1 === value2;
+    }
+  }
+
+  // Iterate through the properties of the updatedObject
+  for (const key in updatedObject) {
+    if (updatedObject.hasOwnProperty(key)) {
+      const previousValue = previousObject[key];
+      const updatedValue = updatedObject[key];
+
+      // Compare the values
+      if (!valuesAreEqual(previousValue, updatedValue)) {
+        changes[key] = updatedValue;
+      }
+    }
+  }
+
+  return changes;
+}
 const Add = () => {
   const navigate = useNavigate();
   const path = useLocation().pathname.split("/")[1];
@@ -17,7 +54,7 @@ const Add = () => {
     description: String(),
     price: String(),
     occupied: Boolean(),
-    contacts: String(),
+    contacts: user.telephone || String(),
     userId: String(),
   };
   const [type, settype] = useState(valu ? valu : defaultVal);
@@ -108,44 +145,6 @@ const Add = () => {
       }
       settype(defaultVal);
     } else {
-      function detectChanges(previousObject, updatedObject) {
-        const changes = {};
-        // Helper function to check if two values are equal
-        function valuesAreEqual(value1, value2) {
-          if (typeof value1 === "object" && typeof value2 === "object") {
-            // Handle nested objects
-            const keys1 = Object.keys(value1);
-            const keys2 = Object.keys(value2);
-            if (keys1.length !== keys2.length) {
-              return false;
-            }
-            for (const key of keys1) {
-              if (!valuesAreEqual(value1[key], value2[key])) {
-                return false;
-              }
-            }
-            return true;
-          } else {
-            return value1 === value2;
-          }
-        }
-
-        // Iterate through the properties of the updatedObject
-        for (const key in updatedObject) {
-          if (updatedObject.hasOwnProperty(key)) {
-            const previousValue = previousObject[key];
-            const updatedValue = updatedObject[key];
-
-            // Compare the values
-            if (!valuesAreEqual(previousValue, updatedValue)) {
-              changes[key] = updatedValue;
-            }
-          }
-        }
-
-        return changes;
-      }
-
       const changes = detectChanges(valu, type);
       Object.keys(changes).length > 0
         ? dispatch(dbchange(type._id, "chhouse", changes))
@@ -154,6 +153,16 @@ const Add = () => {
     }
     navigate(-1);
   };
+  function dilit(e) {
+    e.preventDefault();
+    const res = prompt("Type 'yes' to confirm delete");
+    if (res == "yes") {
+      dispatch(dbchange(type._id, "delete", user._id));
+      navigate(-1);
+    } else {
+      return;
+    }
+  }
   return (
     <div className=" bg-black opacity-80 py-10 ">
       <form className="bg-gray-300 flex flex-col  mx-[20%] rounded-xl p-6 ">
@@ -164,9 +173,7 @@ const Add = () => {
           {path === "edit" ? (
             <button
               onClick={(e) => {
-                e.preventDefault();
-                dispatch(dbchange(type._id, "delete"));
-                navigate(-1);
+                dilit(e);
               }}
               className=" bg-red-300 rounded-full px-2 basis-1/2"
             >

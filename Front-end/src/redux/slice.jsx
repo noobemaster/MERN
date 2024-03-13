@@ -27,9 +27,13 @@ const users = createSlice({
       state.user = null;
       localStorage.clear();
     },
+    profile: (state, { payload }) => {
+      state.user = { ...payload.newuser };
+      localStorage.setItem("User", JSON.stringify(payload.newuser));
+    },
   },
 });
-export const { login, logout } = users.actions;
+export const { login, logout, profile } = users.actions;
 export const { update, signal } = keja.actions;
 export const user = users.reducer;
 export const hao = keja.reducer;

@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Img from "../public/hse.jfif";
+import Img from "../../public/hse.jfif";
 const House = ({ house }) => {
   const {
     type,
