@@ -1,20 +1,23 @@
 import db from "mongoose";
 import { house, users } from "./model.js";
-await db.connect("mongodb://0.0.0.0:27017/saka-keja");
+//await db.connect("mongodb://0.0.0.0:27017/saka-keja");
+await db.connect(
+  "mongodb+srv://everythingeelse1:mongo2024@cluster0.9yvaglf.mongodb.net/saka-keja"
+);
 let get;
 export async function add(req, res) {
-  const {
-    type,
-    picture,
-    price,
-    location,
-    contacts,
-    occupied,
-    description,
-    userId,
-  } = req.body;
-  const page = Math.ceil((await house.count()) / 15);
   try {
+    const {
+      type,
+      picture,
+      price,
+      location,
+      contacts,
+      occupied,
+      description,
+      userId,
+    } = req.body;
+    const page = Math.ceil((await house.count()) / 15);
     const post = await house.create({
       type,
       picture,
@@ -38,16 +41,19 @@ export async function add(req, res) {
   }
 }
 export const disp = async (req, res) => {
-  const p = req.query;
-  get = Object.keys(p);
-  for (const key of get) {
-    if (p[key] == "undefined") {
-      delete p[key];
-    }
-  }
   try {
-    if (p) {
-      get = await house.find({ ...p });
+    const q = req.query;
+    get = Object.keys(q);
+    for (const key of get) {
+      if (q[key] == "undefined") {
+        delete q[key];
+      }
+    }
+    if (q.page) {
+      q.page = Number(q.page);
+      get = await house.find({ ...q });
+    } else if (q) {
+      get = await house.find({ ...q });
     } else {
       get = await house.find();
     }
@@ -94,8 +100,8 @@ export const upd = async (req, res) => {
   }
 };
 export async function del(req, res) {
-  const { value, user } = req.body;
   try {
+    const { value, user } = req.body;
     await house.deleteOne({ _id: value });
     await users.updateOne({ _id: user }, { $pull: { houseIds: value } });
     res.send({ succes: true, message: " deleted" });

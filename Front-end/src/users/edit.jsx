@@ -24,7 +24,7 @@ const ProfileEdit = () => {
       case user.telephone && user.telephone.length != 9:
         alert("invalid number");
         return;
-      case user.email && !user.email.includes("@"):
+      case !user.email?.includes("@"):
         alert("email must have @");
         return;
       case user.password.new != undefined && user.password.old == undefined:
@@ -58,8 +58,8 @@ const ProfileEdit = () => {
   function dilit() {
     const res = prompt("Type 'yes' to delete profile");
     if (res == "yes") {
-      dispatch(dbchange(type._id, "delete", user._id));
-      navigate(-1);
+      dispatch(usercontroll(user.id, "delete"));
+      navigate("/");
     } else {
       return;
     }

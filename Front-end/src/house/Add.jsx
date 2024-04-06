@@ -48,7 +48,7 @@ const Add = () => {
   );
   const user = useSelector((state) => state.user.user);
   const defaultVal = {
-    type: String(),
+    type: "type",
     location: { county: "", sub_county: "", residence: "" },
     picture: String(),
     description: String(),
@@ -117,7 +117,7 @@ const Add = () => {
         type.contacts &&
         type.price >= 2500 &&
         type.location.county !== "" &&
-        type.type !== ""
+        type.type !== "type"
       ) {
         switch (true) {
           case type.location.sub_county === "":
@@ -130,7 +130,7 @@ const Add = () => {
         type.userId = user._id;
         dispatch(dbchange(type, "new"));
         alert("added sucessfully");
-      } else if (type.type === "") {
+      } else if (type.type === "type") {
         alert("please provide type of house");
         return;
       } else if (type.location.county === "") {
@@ -148,8 +148,7 @@ const Add = () => {
       const changes = detectChanges(valu, type);
       Object.keys(changes).length > 0
         ? dispatch(dbchange(type._id, "chhouse", changes))
-        : "";
-      alert("changes cuptered");
+        : null;
     }
     navigate(-1);
   };
@@ -168,7 +167,7 @@ const Add = () => {
       <form className="bg-gray-300 flex flex-col  mx-[20%] rounded-xl p-6 ">
         <span className="flex pb-2">
           <h1 className="basis-1/2 capitalize font-bold text-lg">
-            {path === "add" ? "add" : "change"} here
+            {path} here
           </h1>
           {path === "edit" ? (
             <button
@@ -187,7 +186,7 @@ const Add = () => {
             name="type"
             onChange={(e) => val(e)}
             className="bg-slate-400 my-1 ml-2 w-3/4"
-            defaultValue={type.type ? type.type : "type"}
+            defaultValue={type.type}
             required
           >
             <option disabled hidden>

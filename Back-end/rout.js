@@ -9,8 +9,8 @@ import {
 } from "./userscontrols.js";
 const method = exp.Router();
 method.route("/").get(disp);
+method.route("/users/login").get(login);
 method.route("/users/new").post(newUser);
-method.route("/users/login").post(login);
 method.use(checkToken);
 method.route("/:key").put(upd);
 method.route("/users/update").put(update);

@@ -29,13 +29,14 @@ const House = ({ house }) => {
           {description && description.length > 200 ? "...." : ""}
         </p>
         <h4>Type: {type}</h4>
+        <h4> Price: {price}</h4>
         <details className="overflow-hidden">
           <summary>Location</summary>
           {county && <p className="pl-4">county: {county}</p>}
           {sub_county && <p className="pl-4"> sub-county: {sub_county}</p>}
           {residence && <p className="pl-4">local: {residence}</p>}
         </details>
-        <p> Price: {price}</p>
+
         <p>
           Contacts: +254<a href={`tel:+254${contacts}`}>{contacts}</a>
         </p>

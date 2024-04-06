@@ -7,8 +7,10 @@ const Profile = () => {
   const navigate = useNavigate();
   let list = [];
   let occupied = [];
-  user.houseIds.map((u) => houses.map((h) => u == h._id && list.push(h)));
-  list && list.forEach((l) => l.occupied && occupied.push(l));
+  user.houseIds.forEach((u) =>
+    houses.forEach((h) => u == h._id && list.push(h))
+  );
+  list?.forEach((l) => l.occupied && occupied.push(l));
   return (
     <div>
       <span className="text-center text-xl capitalize">

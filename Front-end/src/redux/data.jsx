@@ -6,19 +6,22 @@ let port = axios.create({
 });
 export const fetch = (q) => async (dispatch) => {
   //fetches houses at first render and on every change and query
-  if (q) {
+  if (q.page) {
     await port
-      .get(
-        `/?location.county=${q.county}&location.sub_county=${q.sub_county}&price=${q.price}&type=${q.type}`
-      )
+      .get("/", { params: q })
       .then((res) => dispatch(update(res.data.house)))
       .catch((e) => console.log(e.response.data));
   } else {
     await port
-      .get("/", { page: 1 })
-      .then((res) => {
-        dispatch(update(res.data.house));
+      .get("/", {
+        params: {
+          "location.county": q.county,
+          "location.sub_county": q.sub_county,
+          price: q.price,
+          type: q.type,
+        },
       })
+      .then((res) => dispatch(update(res.data.house)))
       .catch((e) => console.log(e.response.data));
   }
 };
@@ -53,6 +56,7 @@ export const dbchange = (hao, mes, com, Uid, comment) => async (dispatch) => {
         .catch((e) => errorHandling(e));
       break;
     case "chhouse":
+      alert("changes captured");
       port
         .put(`/${mes}`, { data: { value: hao, change: com } })
         .then((res) => Do(res))
@@ -110,7 +114,7 @@ export const usercontroll = (details, act) => async (dispatch) => {
       break;
     case "log-in":
       port
-        .post("/users/login", { data: details })
+        .get("/users/login", { params: details })
         .then((res) => dispatch(login(res.data)))
         .catch((e) =>
           e.response.data ? alert(`${e.response.data}`) : console.log(e)

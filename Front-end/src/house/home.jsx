@@ -1,15 +1,12 @@
 import House from "./house";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { fetch } from "../redux/data";
 import { detectChanges } from "./Add";
 import { useNavigate } from "react-router-dom";
 const Home = () => {
   const dispatch = useDispatch();
   const { Data } = useSelector(({ houses }) => houses);
-  useEffect(() => {
-    dispatch(fetch());
-  }, [useSelector(({ houses }) => houses.signal)]);
   const defaultVal = {
     type: "type",
     county: String(),
@@ -41,7 +38,7 @@ const Home = () => {
           />
         </span>
         <span className="capitalize text-lg py-4">
-          sub-county:{" "}
+          sub-county:
           <input
             type="search"
             name="sub-county"
@@ -53,7 +50,7 @@ const Home = () => {
           />
         </span>
         <span className="capitalize text-lg py-4">
-          price:{" "}
+          price:
           <input
             type="search"
             name="price"
@@ -87,7 +84,13 @@ const Home = () => {
       </section>
       <main className="flex flex-wrap">
         {Data ? (
-          Data.map((d) => <House key={d._id} house={d} />)
+          Data?.length > 0 ? (
+            Data.map((d) => <House key={d._id} house={d} />)
+          ) : (
+            <section className="text-white my-24 mx-20 uppercase text-3xl">
+              no such data
+            </section>
+          )
         ) : (
           <section className="text-white my-24 mx-20 uppercase text-3xl">
             loading......

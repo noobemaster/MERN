@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 const keja = createSlice({
   name: "keja",
-  initialState: { Data: [], signal: 0 },
+  initialState: { Data: [], signal: 0, page: 1 },
   reducers: {
     update: (state, { payload }) => {
       state.Data = payload;

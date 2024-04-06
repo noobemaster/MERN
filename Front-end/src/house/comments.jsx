@@ -7,8 +7,9 @@ const Comments = () => {
   const dispatch = useDispatch();
   const locol = useParams().id;
   const user = useSelector(({ user }) => user.user);
-  const from = useSelector(({ houses }) =>
-    houses.Data.find(({ _id }) => _id === locol)
+  const from = useSelector(
+    ({ houses }) =>
+      houses.Data.length > 1 && houses.Data.find(({ _id }) => _id === locol)
   );
   const {
     _id,
@@ -21,24 +22,25 @@ const Comments = () => {
     comments,
     description,
   } = from;
-  const { county, sub_county, residence } = location;
-  const [comment, chgcomment] = useState({
+  const initial = {
     comment: "",
     action: "Add",
     comid: 0,
-  });
+  };
+  const [comment, chgcomment] = useState(initial);
   const parentId = _id;
-  const edit = () => {
-    if (comment.action === "change") {
+  function edit() {
+    if (comment.action === "change" && comment.comment !== comment.old) {
       dispatch(
         dbchange(parentId, "chcom", comment.comid, user._id, comment.comment)
       );
-      chgcomment((prev) => ({ ...prev, comment: "", action: "Add", comid: 0 }));
+      chgcomment(initial);
     } else if (comment.action === "Add") {
-      dispatch(dbchange(parentId, "comments", comment.comment, user._id));
-      chgcomment((prev) => ({ ...prev, comment: "" }));
+      comment.comment.length > 1 &&
+        dispatch(dbchange(parentId, "comments", comment.comment, user._id));
+      chgcomment((prev) => initial);
     }
-  };
+  }
   return (
     <div className="flex ">
       <div className="border-2 border-black p-4 w-[50%] pl-10 ">
@@ -52,9 +54,15 @@ const Comments = () => {
         <h4>Type: {type}</h4>
         <h4 className=" font-bold ">Location</h4>
         <span>
-          {county && <p className="pl-4">county: {county}</p>}
-          {sub_county && <p className="pl-4"> sub-county: {sub_county}</p>}
-          {residence && <p className="pl-4">local: {residence}</p>}
+          {location?.county && (
+            <p className="pl-4">county: {location.county}</p>
+          )}
+          {location?.sub_county && (
+            <p className="pl-4"> sub-county: {location.sub_county}</p>
+          )}
+          {location?.residence && (
+            <p className="pl-4">local: {location.residence}</p>
+          )}
         </span>
 
         <p> Price: {price}</p>
@@ -84,9 +92,7 @@ const Comments = () => {
           {comment.action == "change" ? (
             <button
               className=" bg-red-700 rounded-xl   px-2"
-              onClick={() =>
-                chgcomment((prev) => ({ ...prev, comment: "", action: "Add" }))
-              }
+              onClick={() => chgcomment(initial)}
             >
               cancel
             </button>
@@ -97,13 +103,14 @@ const Comments = () => {
             <div className="border-2 border-zinc-800 p-3 my-2 ml-2" key={_id}>
               <span>David</span>
               <section className="p-2 text-white">{comment}</section>
-              {user && user._id == UID ? (
+              {user?._id == UID ? (
                 <section className="flex flex-row mt-4">
                   <button
                     onClick={() =>
                       chgcomment((prev) => ({
                         ...prev,
                         comment,
+                        old: comment,
                         action: "change",
                         comid: _id,
                       }))
@@ -114,7 +121,10 @@ const Comments = () => {
                   </button>
                   <button
                     className="basis-1/2 text-red-900 bg-red-200 rounded-xl mx-5 h-8"
-                    onClick={() => dispatch(dbchange(parentId, "delcom", _id))}
+                    onClick={() => {
+                      dispatch(dbchange(parentId, "delcom", _id));
+                      chgcomment(initial);
+                    }}
                   >
                     delete
                   </button>

@@ -4,7 +4,10 @@ import { hash, compare } from "bcrypt";
 import env from "dotenv";
 import db from "mongoose";
 import { house, users } from "./model.js";
-await db.connect("mongodb://0.0.0.0:27017/saka-keja");
+//await db.connect("mongodb://0.0.0.0:27017/saka-keja");
+await db.connect(
+  "mongodb+srv://everythingeelse1:mongo2024@cluster0.9yvaglf.mongodb.net/saka-keja"
+);
 env.config();
 Express().use(Express.json());
 function token(asset) {
@@ -26,13 +29,13 @@ export async function newUser(req, res) {
     Refresh = refreshToken({ email });
     res.send({ user, Token, Refresh });
   } catch (e) {
-    res.send(e.message);
+    res.send({ mes: e.message });
   }
 }
 export async function login(req, res) {
   try {
-    const reg = req.body.data;
-    let user = await users.findOne({ email: reg.email });
+    const reg = req.query;
+    let user = await users.findOne({ email: reg?.email });
     if (!user) return res.status(404).send("no such user");
     if (await compare(reg.password, user.password)) {
       Token = token(reg);
@@ -42,31 +45,37 @@ export async function login(req, res) {
       res.status(400).send("Wrong password");
     }
   } catch (err) {
+    console.log(err);
     res.sendStatus(404);
   }
 }
 export function checkToken(req, res, next) {
-  const auth = req.headers["authorization"].split(" ");
-  Token = auth && auth[1];
-  Refresh = auth && auth[2];
-  if (!Token || Token == "null") return res.sendStatus(401);
-  jswt.verify(Token, process.env.Access_token, (err, user) => {
-    if (err && err.message === "jwt expired") {
-      if (!Refresh || Refresh == "null") return res.sendStatus(401);
-      jswt.verify(Refresh, process.env.Refresh_Token, (err, user) => {
-        if (err && err.message === "jwt expired") {
-          return res.status(403).send("refreshToken expired");
-        } else if (err) {
-          return res.status(403).send(`${err.message}. Please Login!`);
-        }
-        Token = token({ email: user.email });
-        req.toke1 = Token;
+  try {
+    const auth = req.headers["authorization"]?.split(" ");
+    Token = auth && auth[1];
+    Refresh = auth && auth[2];
+    if (!Token || Token == "null") return res.sendStatus(401);
+    jswt.verify(Token, process.env.Access_token, (err, user) => {
+      if (err && err.message === "jwt expired") {
+        if (!Refresh || Refresh == "null") return res.sendStatus(401);
+        jswt.verify(Refresh, process.env.Refresh_Token, (err, user) => {
+          if (err?.message === "jwt expired") {
+            return res.status(403).send("refreshToken expired");
+          } else if (err) {
+            return res.status(403).send(`${err.message}. Please Login!`);
+          }
+          Token = token({ email: user.email });
+          req.toke1 = Token;
+          next();
+        });
+      } else {
         next();
-      });
-    } else {
-      next();
-    }
-  });
+      }
+    });
+  } catch (e) {
+    console.log(e);
+    res.send({ sucsess: false, mes: e });
+  }
 }
 export async function update(req, res) {
   let newuser;
