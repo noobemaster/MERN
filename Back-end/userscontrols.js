@@ -13,6 +13,7 @@ const Refresh_Token = process.env.Refresh_Token;
 env.config();
 Express().use(Express.json());
 function token(asset) {
+  console.log(Access_token);
   return jswt.sign(asset, Access_token, { expiresIn: "30min" });
 }
 function refreshToken(mail) {
