@@ -8,13 +8,15 @@ import { house, users } from "./model.js";
 await db.connect(
   "mongodb+srv://everythingeelse1:mongo2024@cluster0.9yvaglf.mongodb.net/saka-keja"
 );
+const Access_token = process.env.Access_token;
+const Refresh_Token = process.env.Refresh_Token;
 env.config();
 Express().use(Express.json());
 function token(asset) {
-  return jswt.sign(asset, process.env.Access_token, { expiresIn: "30min" });
+  return jswt.sign(asset, Access_token, { expiresIn: "30min" });
 }
 function refreshToken(mail) {
-  return jswt.sign(mail, process.env.Refresh_Token, { expiresIn: "3d" });
+  return jswt.sign(mail, Refresh_Token, { expiresIn: "3d" });
 }
 let hashed;
 let Token;
@@ -55,10 +57,10 @@ export function checkToken(req, res, next) {
     Token = auth && auth[1];
     Refresh = auth && auth[2];
     if (!Token || Token == "null") return res.sendStatus(401);
-    jswt.verify(Token, process.env.Access_token, (err, user) => {
+    jswt.verify(Token, Access_token, (err, user) => {
       if (err && err.message === "jwt expired") {
         if (!Refresh || Refresh == "null") return res.sendStatus(401);
-        jswt.verify(Refresh, process.env.Refresh_Token, (err, user) => {
+        jswt.verify(Refresh, Refresh_Token, (err, user) => {
           if (err?.message === "jwt expired") {
             return res.status(403).send("refreshToken expired");
           } else if (err) {
