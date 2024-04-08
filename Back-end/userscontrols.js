@@ -8,9 +8,9 @@ import { house, users } from "./model.js";
 await db.connect(
   "mongodb+srv://everythingeelse1:mongo2024@cluster0.9yvaglf.mongodb.net/saka-keja"
 );
+env.config();
 const Access_token = process.env.Access_token;
 const Refresh_Token = process.env.Refresh_Token;
-env.config();
 Express().use(Express.json());
 function token(asset) {
   console.log(Access_token);
