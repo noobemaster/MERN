@@ -1,7 +1,9 @@
 import axios from "axios";
 import { profile, signal, login, logout, update } from "./slice";
+const baseURL = "https://mern-anro.onrender.com/house/";
+//baseURL= "http://localhost:2000/house",
 let port = axios.create({
-  baseURL: "http://localhost:2000/house",
+  baseURL,
   headers: { "Content-Type": "application/json" },
 });
 export const fetch = (q) => async (dispatch) => {
@@ -28,7 +30,7 @@ export const fetch = (q) => async (dispatch) => {
 
 export const dbchange = (hao, mes, com, Uid, comment) => async (dispatch) => {
   port = axios.create({
-    baseURL: "http://localhost:2000/house",
+    baseURL,
     headers: {
       Authorization: `Bearer ${localStorage.getItem(
         "Token"
@@ -95,7 +97,7 @@ export const dbchange = (hao, mes, com, Uid, comment) => async (dispatch) => {
 };
 export const usercontroll = (details, act) => async (dispatch) => {
   port = axios.create({
-    baseURL: "http://localhost:2000/house",
+    baseURL,
     headers: {
       Authorization: `Bearer ${localStorage.getItem(
         "Token"
