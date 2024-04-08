@@ -11,6 +11,7 @@ await db.connect(
 env.config();
 Express().use(Express.json());
 function token(asset) {
+  console.log( process.env.Access_token);
   return jswt.sign(asset, process.env.Access_token, { expiresIn: "30min" });
 }
 function refreshToken(mail) {
