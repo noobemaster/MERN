@@ -1,19 +1,16 @@
 import Express from "express";
 import jswt from "jsonwebtoken";
-import { hash, compare } from "bcrypt";
 import env from "dotenv";
 import db from "mongoose";
+import { hash, compare } from "bcrypt";
 import { house, users } from "./model.js";
-//await db.connect("mongodb://0.0.0.0:27017/saka-keja");
-await db.connect(
-  "mongodb+srv://everythingeelse1:mongo2024@cluster0.9yvaglf.mongodb.net/saka-keja"
-);
+Express().use(Express.json());
 env.config();
 const Access_token = process.env.Access_token;
 const Refresh_Token = process.env.Refresh_Token;
-Express().use(Express.json());
+const db_url = process.env.Url;
+await db.connect(db_url);
 function token(asset) {
-  console.log(Access_token);
   return jswt.sign(asset, Access_token, { expiresIn: "30min" });
 }
 function refreshToken(mail) {

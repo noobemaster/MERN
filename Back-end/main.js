@@ -7,5 +7,5 @@ app.use(express.json());
 app.use(cors());
 app.use("/house", meth);
 app.listen(PORT, () => {
-  console.log(`listening on ${PORT}...`);
+  console.log(`listening...`);
 });
