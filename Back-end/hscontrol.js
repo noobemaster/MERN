@@ -1,9 +1,8 @@
 import db from "mongoose";
 import { house, users } from "./model.js";
+import { db_url } from "usercontrols.js";
 //await db.connect("mongodb://0.0.0.0:27017/saka-keja");
-await db.connect(
-  "mongodb+srv://everythingeelse1:mongo2024@cluster0.9yvaglf.mongodb.net/saka-keja"
-);
+await db.connect(db_url);
 let get;
 export async function add(req, res) {
   try {

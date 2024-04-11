@@ -8,7 +8,7 @@ Express().use(Express.json());
 env.config();
 const Access_token = process.env.Access_token;
 const Refresh_Token = process.env.Refresh_Token;
-const db_url = process.env.Url;
+export const db_url = process.env.Url;
 await db.connect(db_url);
 function token(asset) {
   return jswt.sign(asset, Access_token, { expiresIn: "30min" });
