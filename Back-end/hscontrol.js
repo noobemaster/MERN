@@ -1,6 +1,6 @@
 import db from "mongoose";
 import { house, users } from "./model.js";
-import { db_url } from "./usercontrols.js";
+import { db_url } from "./userscontrols.js";
 //await db.connect("mongodb://0.0.0.0:27017/saka-keja");
 await db.connect(db_url);
 let get;
