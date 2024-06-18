@@ -1,7 +1,7 @@
 import House from "./house";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { fetch } from "../redux/data";
+import { featch } from "../redux/data";
 import { detectChanges } from "./Add";
 import { useNavigate } from "react-router-dom";
 const Home = () => {
@@ -23,7 +23,7 @@ const Home = () => {
       url += `${key}=${q[key]}&`;
     }
     Navigate(`/?${url}`);
-    dispatch(fetch(q));
+    dispatch(featch(q));
   }
   return (
     <>

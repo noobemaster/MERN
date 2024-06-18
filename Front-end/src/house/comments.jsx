@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { dbchange, fetch } from "../redux/data";
+import { dbchange} from "../redux/data";
+import { nanoid } from "@reduxjs/toolkit";
 import Img from "../../public/hse.jfif";
 const Comments = () => {
   const dispatch = useDispatch();
@@ -49,7 +50,7 @@ const Comments = () => {
             occupied
           </p>
         )}
-        <img src={Img} alt="keja" />
+        {picture?.length?picture.map((pic)=><img key={nanoid()} src={pic}  alt="keja" />):<img src={Img} alt="keja" />}
         <p className="py-4">{description ? description : null}</p>
         <h4>Type: {type}</h4>
         <h4 className=" font-bold ">Location</h4>

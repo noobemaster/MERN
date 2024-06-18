@@ -1,18 +1,18 @@
 import axios from "axios";
-import { profile, signal, login, logout, update } from "./slice";
+import { profile, signal, login, logout, update} from "./slice";
 const baseURL = "https://mern-anro.onrender.com/house/";
-//baseURL= "http://localhost:2000/house",
+//const baseURL= "http://localhost:2000/house"
 let port = axios.create({
   baseURL,
   headers: { "Content-Type": "application/json" },
 });
-export const fetch = (q) => async (dispatch) => {
+export const featch = (q) => async (dispatch) => {
   //fetches houses at first render and on every change and query
   if (q.page) {
     await port
       .get("/", { params: q })
       .then((res) => dispatch(update(res.data.house)))
-      .catch((e) => console.log(e.response.data));
+      .catch((e) => console.log(e));
   } else {
     await port
       .get("/", {
@@ -27,7 +27,30 @@ export const fetch = (q) => async (dispatch) => {
       .catch((e) => console.log(e.response.data));
   }
 };
-
+export const houseurl=(file,type,ch)=>async(dispatch)=>{
+  try{
+    async function geturl(){
+      let res= await fetch(`${baseURL}/upload`,{
+          method:'POST',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              "Token"
+            )} ${localStorage.getItem("refreshToken")}`,
+          },body:file
+        })
+        res= await res.json()
+        return res.houseurl
+    }
+    if(Array.from(file.entries()).length){
+      ch?ch.picture=await geturl():type.picture= await geturl();
+      ch?dispatch(dbchange(type, "chhouse", ch)):dispatch(dbchange(type, "new")); 
+      }
+    else{
+      ch?dispatch(dbchange(type, "chhouse", ch)):dispatch(dbchange(type, "new"));
+    } 
+}
+  catch(e){console.log(e)}
+}
 export const dbchange = (hao, mes, com, Uid, comment) => async (dispatch) => {
   port = axios.create({
     baseURL,

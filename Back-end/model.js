@@ -2,7 +2,7 @@ import db from "mongoose";
 const hsSchema = db.Schema(
   {
     type: { type: String },
-    picture: String,
+    picture: [],
     description: String,
     price: Number,
     location: {

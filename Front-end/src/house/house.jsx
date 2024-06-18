@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { nanoid } from "@reduxjs/toolkit";
 import Img from "../../public/hse.jfif";
 const House = ({ house }) => {
   const {
@@ -23,7 +24,13 @@ const House = ({ house }) => {
             occupied
           </p>
         )}
-        <img src={Img} alt="keja" />
+        {picture.length ? (
+          picture.map((pic) => {
+            return <img key={nanoid()} src={pic} alt="keja" />;
+          })
+        ) : (
+          <img src={Img} alt="keja" />
+        )}
         <p className="py-4 ">
           {description ? description.slice(0, 200) : ""}
           {description && description.length > 200 ? "...." : ""}

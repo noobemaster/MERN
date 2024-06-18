@@ -7,11 +7,13 @@ import {
   update,
   deluser,
 } from "./userscontrols.js";
+import {upload,upld} from "./upload.js";
 const method = exp.Router();
 method.route("/").get(disp);
 method.route("/users/login").get(login);
 method.route("/users/new").post(newUser);
 method.use(checkToken);
+method.route("/upload").post(upld.array("house-image"),upload)
 method.route("/:key").put(upd);
 method.route("/users/update").put(update);
 method.route("/users/:key").delete(deluser);

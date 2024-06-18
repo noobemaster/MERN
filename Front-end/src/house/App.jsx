@@ -10,12 +10,12 @@ import Profile from "../users/profile";
 import ProfileEdit from "../users/edit";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { fetch } from "../redux/data";
+import { featch } from "../redux/data";
 function App() {
   const dispatch = useDispatch();
   const page = useSelector(({ houses }) => houses.page);
   useEffect(() => {
-    dispatch(fetch({ page }));
+    dispatch(featch({ page }));
   }, [useSelector(({ houses }) => houses.signal)]);
   return (
     <div className="bg-zinc-700">

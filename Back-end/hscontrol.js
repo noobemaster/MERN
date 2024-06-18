@@ -1,7 +1,8 @@
 import db from "mongoose";
 import { house, users } from "./model.js";
 import { db_url } from "./userscontrols.js";
-//await db.connect("mongodb://0.0.0.0:27017/saka-keja");
+import path from "path";
+import fs from "fs";
 await db.connect(db_url);
 let get;
 export async function add(req, res) {
@@ -99,8 +100,15 @@ export const upd = async (req, res) => {
   }
 };
 export async function del(req, res) {
+  function delpics(l) {
+    l.picture.forEach(async (pic) => {
+      let temp = path.join(process.cwd(),"upload/house_image",pic.split("e/")[1]);
+      fs.unlink(temp, (err) => {if (err) throw err;});
+    });
+  }
   try {
     const { value, user } = req.body;
+    delpics(await house.findOne({ _id: value }));
     await house.deleteOne({ _id: value });
     await users.updateOne({ _id: user }, { $pull: { houseIds: value } });
     res.send({ succes: true, message: " deleted" });

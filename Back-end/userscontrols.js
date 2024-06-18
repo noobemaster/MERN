@@ -16,9 +16,7 @@ function token(asset) {
 function refreshToken(mail) {
   return jswt.sign(mail, Refresh_Token, { expiresIn: "3d" });
 }
-let hashed;
-let Token;
-let Refresh;
+let hashed,Token,Refresh;
 export async function newUser(req, res) {
   try {
     const { email, password } = req.body.data;
@@ -66,9 +64,11 @@ export function checkToken(req, res, next) {
           }
           Token = token({ email: user.email });
           req.toke1 = Token;
+          req.user=user.email
           next();
         });
       } else {
+        req.user=user.email
         next();
       }
     });

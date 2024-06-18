@@ -1,11 +1,12 @@
 import express from "express";
 import meth from "./rout.js";
 import cors from "cors";
-const PORT = 2000;
+export const PORT = 2000;
 const app = express();
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 app.use("/house", meth);
+app.use("/house-image",express.static("upload/house_image"));
 app.listen(PORT, () => {
-  console.log(`listening...`);
+  console.log('listening...');
 });

@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
-import { dbchange } from "../redux/data";
+import {useState } from "react";
+import { nanoid } from "@reduxjs/toolkit";
+import { dbchange,houseurl } from "../redux/data";
 export function detectChanges(previousObject, updatedObject) {
   const changes = {};
   // Helper function to check if two values are equal
@@ -39,6 +40,7 @@ export function detectChanges(previousObject, updatedObject) {
 
   return changes;
 }
+let Form=new FormData();
 const Add = () => {
   const navigate = useNavigate();
   const path = useLocation().pathname.split("/")[1];
@@ -50,7 +52,7 @@ const Add = () => {
   const defaultVal = {
     type: "type",
     location: { county: "", sub_county: "", residence: "" },
-    picture: String(),
+    picture: [],
     description: String(),
     price: String(),
     occupied: Boolean(),
@@ -58,15 +60,14 @@ const Add = () => {
     userId: String(),
   };
   const [type, settype] = useState(valu ? valu : defaultVal);
+  const [p, setp] = useState(valu ? valu.picture : []);
   const dispatch = useDispatch();
-  /*  ********Views the image in clientside*********/
-  var loadFile = function (event) {
-    var output = document.getElementById("output");
-    output.src = URL.createObjectURL(event.target.files[0]); //.split("b:")[1];
-    console.log(output);
-    output.onload = function () {
-      URL.revokeObjectURL(output.src); // free memory
-    };
+  /*********Views the image in clientside*********/
+  var loadFile = async function (event) {
+    setp([])
+    for(let i=0;i<event.target.files.length;i++){
+    setp(v=>[...v,URL.createObjectURL(event.target.files[i])])
+    Form.append('house-image',event.target.files[i])}
   };
   const val = (e) => {
     switch (e.target.name) {
@@ -128,7 +129,7 @@ const Add = () => {
             break;
         }
         type.userId = user._id;
-        dispatch(dbchange(type, "new"));
+        dispatch(houseurl(Form,type,null));
         alert("added sucessfully");
       } else if (type.type === "type") {
         alert("please provide type of house");
@@ -144,10 +145,12 @@ const Add = () => {
         return;
       }
       settype(defaultVal);
+      setp([]);
+      Form=new FormData()
     } else {
       const changes = detectChanges(valu, type);
-      Object.keys(changes).length > 0
-        ? dispatch(dbchange(type._id, "chhouse", changes))
+      Object.keys(changes).length > 0 || Array.from(Form.entries()).length>0
+        ? dispatch(houseurl(Form,type._id,changes))
         : null;
     }
     navigate(-1);
@@ -238,14 +241,16 @@ const Add = () => {
             className="bg-slate-200 my-1 ml-2 border-2 border-black"
           />
         </span>
-        <br />
-        <img id="output" className="w-72 h-64 ml-6 my-2 hidden" alt="hse" />
+        <br /><div className="flex flex-wrap">
+        {p.map(p=>
+        <img id="output" src={p} key={nanoid()}className="w-72 h-64 ml-6 my-2" alt="hse" />
+        )}</div>
         <input
           name="image"
           type="file"
-          accept="image/*"
+          multiple
           onChange={(e) => loadFile(e)}
-        />
+        /> 
         <br />
         <label htmlFor="p">
           Price:
